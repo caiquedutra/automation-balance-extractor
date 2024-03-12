@@ -9,7 +9,7 @@ load_dotenv()
 
 
 USERNAME = os.getenv("USERNAME")
-PASSWORD = os.getenv["PASSWORD"]
+PASSWORD = os.getenv("PASSWORD")
 INITIALDATE = os.getenv("INITIALDATE")
 FINAL_DATE = os.getenv("FINALDATE")
 def get_balance(cpf):

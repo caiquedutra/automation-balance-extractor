@@ -4,14 +4,14 @@ from selenium.webdriver.common.by import By
 import pyautogui as tempoPausaComputador
 import time
 from dotenv import load_dotenv 
-load_dotenv()
 import os
+load_dotenv()
 
-USERNAME = os.environ["USERNAME"]
-PASSWORD = os.environ["PASSWORD"]
-INITIAL_DATE = os.environ["INITIAL_DATE"]
-FINAL_DATE = os.environ["FINAL_DATE"]
 
+USERNAME = os.getenv("USERNAME")
+PASSWORD = os.getenv["PASSWORD"]
+INITIALDATE = os.getenv("INITIALDATE")
+FINAL_DATE = os.getenv("FINALDATE")
 def get_balance(cpf):
     chrome = webdriver.Chrome()
     chrome.get("https://sbe.curitiba.pr.gov.br/sbe-web/login/login.html")
@@ -21,11 +21,11 @@ def get_balance(cpf):
     chrome.find_element(By.XPATH, '//*[@id="formPagamento"]/center/table/tbody/tr[4]/td[1]/input').click()
     chrome.find_element(By.NAME, "liTermo").click()
     chrome.find_element(By.NAME, "continuar").click()
-    chrome.find_element(By.NAME, "documentoNacional").send_keys(cpf,Keys.ENTER)
+    chrome.find_element(By.NAME, "documentoNacional").send_keys("13856885994",Keys.ENTER)
     try:
         get_value = chrome.find_element(By.NAME, "usuario").get_attribute('value')
     except Exception as err:
-        return None
+        return 0
     chrome.find_element(By.XPATH, '//*[@id="tabelaConteudo"]/tbody/tr[10]/td/a/img').click()
     chrome.find_element(By.XPATH, '//*[@id="menu_19"]/div/p[3]/a').click()
     chrome.find_element(By.XPATH, '//*[@id="formConsultarInformacaoUsurio"]/table/tbody/tr[4]/td/input').click()
@@ -33,8 +33,8 @@ def get_balance(cpf):
     chrome.execute_script(f"arguments[0].value='{get_value}';", change_value)
 
     def handling_balance(attempts = 0):
-        if attempts == 4:  return None
-        get_periodo_inicial = INITIAL_DATE
+        if attempts == 3:  return 0
+        get_periodo_inicial = INITIALDATE
         get_periodo_final = FINAL_DATE
         periodo_inicio = chrome.find_element(By.ID,"periodoInicio")
         periodo_final = chrome.find_element(By.ID,"periodoFim")
@@ -54,8 +54,11 @@ def get_balance(cpf):
                 while balance == "--":
                     index += 1
                     lines = len(filter_table) - index
+                    if lines == 0:
+                        chrome.quit()
+                        return 0
                     balance = filter_table[lines].find_elements(By.TAG_NAME,'td')[7].text
-                
+                chrome.quit()
                 return balance
             chrome.quit()
             return balance

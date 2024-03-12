@@ -21,7 +21,7 @@ def get_balance(cpf):
     chrome.find_element(By.XPATH, '//*[@id="formPagamento"]/center/table/tbody/tr[4]/td[1]/input').click()
     chrome.find_element(By.NAME, "liTermo").click()
     chrome.find_element(By.NAME, "continuar").click()
-    chrome.find_element(By.NAME, "documentoNacional").send_keys("13856885994",Keys.ENTER)
+    chrome.find_element(By.NAME, "documentoNacional").send_keys(cpf,Keys.ENTER)
     try:
         get_value = chrome.find_element(By.NAME, "usuario").get_attribute('value')
     except Exception as err:

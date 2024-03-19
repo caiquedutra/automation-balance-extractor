@@ -33,7 +33,10 @@ def get_balance(cpf):
     chrome.execute_script(f"arguments[0].value='{get_value}';", change_value)
 
     def handling_balance(attempts = 0):
-        if attempts == 3:  return 0
+        if attempts == 3:
+            chrome.quit()  
+            return 0
+            
         get_periodo_inicial = INITIALDATE
         get_periodo_final = FINAL_DATE
         periodo_inicio = chrome.find_element(By.ID,"periodoInicio")
@@ -46,8 +49,14 @@ def get_balance(cpf):
         try:    
             filter_table = chrome.find_elements(By.XPATH, '//*[@id="divContaCorrente"]/table/tbody/tr')
             lines = len(filter_table) - 1
+            print(lines)
+
             if  lines == -1:
                 return handling_balance(attempts + 1) 
+            if lines == 0:
+                chrome.quit()
+
+                return 0
             balance = filter_table[lines].find_elements(By.TAG_NAME,'td')[7].text
             index = 1            
             if balance == "--":
@@ -63,7 +72,9 @@ def get_balance(cpf):
             chrome.quit()
             return balance
             
-        except Exception: 
+        except Exception as err: 
+            print(err)
+
             return handling_balance()
 
     return handling_balance()
